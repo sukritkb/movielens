@@ -1,8 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 
 from pyspark.sql import SparkSession, DataFrame
 
-from common.constants import DataFormats
+from common.constants import DataFormats, DEFAULT_CSV_WRITE_OPTIONS
 from common.writer.writer import Writer
 
 
@@ -12,7 +12,12 @@ class CSVWriter(Writer):
         self.sc = sc
 
     def write(
-        self, df: DataFrame, path: str, mode: str = None, options: Dict[str, str] = None
+        self,
+        df: DataFrame,
+        path: str,
+        partition_columns: List[str] = None,
+        mode: str = None,
+        options: Dict[str, str] = DEFAULT_CSV_WRITE_OPTIONS,
     ):
-        super().write(df, DataFormats.CSV, path, mode, options)
+        super().write(df, DataFormats.CSV, path, partition_columns, mode, options)
 

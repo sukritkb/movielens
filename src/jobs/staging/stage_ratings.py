@@ -24,10 +24,7 @@ class StageRatings(Job):
             )
             ratings_df = (
                 CSVReader(self.jc.spark)
-                .read(
-                    ratings_path,
-                    {"header": "true", "mergeSchema": "true", "inferSchema": "true"},
-                )
+                .read(ratings_path)
                 .withColumn("run_date", lit(self.jc.run_date))
             )
             column_set = {
