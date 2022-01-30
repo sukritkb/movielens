@@ -15,8 +15,11 @@ from common.constants import DEFAULT_SPARK_CONF, DataFormats, JobType
 from common.reader.reader import Reader
 from jobs.context import JobContext
 
-# if os.path.exists("libs.zip"):
-#     sys.path.insert(0, "libs.zip")
+if os.path.exists("asos_movielens-0.0.1-py3.10.egg"):
+    print("True")
+    sys.path.insert(0, "asos_movielens-0.0.1-py3.10.egg")
+
+
 # else:
 #     sys.path.insert(0, "./libs")
 
@@ -39,8 +42,9 @@ __author__ = "sukritkb"
 
 if __name__ == "__main__":
 
-    print(os.path)
-    with open("src/logging.json") as log_json:
+    package_directory = os.path.dirname(os.path.abspath(__file__))
+    log_file=os.path.join(package_directory, 'logging.json')
+    with open(log_file) as log_json:
         logging_config = json.load(log_json)
     logging.config.dictConfig(logging_config)
     logger = logging.getLogger(__name__)
