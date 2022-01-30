@@ -3,7 +3,7 @@ from typing import Dict
 from pyspark.sql import SparkSession, DataFrame
 
 from common.reader.reader import Reader
-from common.constants import DataFormats
+from common.constants import DEFAULT_CSV_READ_OPTIONS, DataFormats
 
 
 class CSVReader(Reader):
@@ -11,5 +11,5 @@ class CSVReader(Reader):
         super().__init__(sc)
         self.sc = sc
 
-    def read(self, path: str, options: Dict[str, str] = None) -> DataFrame:
+    def read(self, path: str, options: Dict[str, str] = DEFAULT_CSV_READ_OPTIONS) -> DataFrame:
         return super().read(DataFormats.CSV, path, options)

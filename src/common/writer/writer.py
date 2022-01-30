@@ -72,7 +72,7 @@ class Writer:
                 df.write.format(format.value).mode(mode).options(**options).save(path)
             else:
                 df.write.format(format.value).mode(mode).options(**options).partitionBy(
-                    **partition_columns
+                    *partition_columns
                 ).save(path)
             logger.info(f"Successfully saved dataframe to {path}")
 

@@ -18,13 +18,13 @@ logger = logging.getLogger(__name__)
 class DeltaWriter(Writer):
     def __init__(self, sc: SparkSession) -> None:
         super().__init__(sc)
-        self.sc = sc 
+        self.sc = sc
 
     def write(
         self,
         df: DataFrame,
         path: str,
-        partition_columns: List[str],
+        partition_columns: List[str] = None,
         mode: str = None,
         options: Dict[str, str] = None,
     ):
@@ -36,13 +36,13 @@ class DeltaWriter(Writer):
         db_name: str,
         table_name: str,
         path: str,
-        partition_columns: List[str],
+        partition_columns: List[str] = None,
         mode: str = None,
         options: Dict[str, str] = None,
     ):
         self.write(df, path, partition_columns, mode, options)
         self.sc.sql(
-            f"CREATE TABLE {db_name}.{table_name} if not exists USING DELTA LOCATION {path}"
+            f"CREATE TABLE if not exists {db_name}.{table_name} USING DELTA LOCATION '{path}'"
         )
 
     def upsert_to_table(
