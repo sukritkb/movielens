@@ -1,12 +1,13 @@
 import argparse
-import enum
-import importlib
+import importlib.resources
 import time
 import os
 import sys
 import logging.config
 import logging
 import json
+from datetime import date
+
 
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
@@ -15,20 +16,7 @@ from common.constants import DEFAULT_SPARK_CONF, DataFormats, JobType
 from common.reader.reader import Reader
 from jobs.context import JobContext
 
-if os.path.exists("asos_movielens-0.0.1-py3.10.egg"):
-    print("True")
-    sys.path.insert(0, "asos_movielens-0.0.1-py3.10.egg")
 
-
-# else:
-#     sys.path.insert(0, "./libs")
-
-# if os.path.exists("jobs.zip"):
-#     sys.path.insert(0, "jobs.zip")
-# else:
-#     sys.path.insert(0, "./jobs")
-
-# pylint:disable=E0401
 try:
     import pyspark
 except:
@@ -43,8 +31,8 @@ __author__ = "sukritkb"
 if __name__ == "__main__":
 
     package_directory = os.path.dirname(os.path.abspath(__file__))
-    log_file=os.path.join(package_directory, 'logging.json')
-    with open(log_file) as log_json:
+    log_file = os.path.join(package_directory, "logging.json")
+    with importlib.resources.open_text("configs", "logging.json") as log_json:
         logging_config = json.load(log_json)
     logging.config.dictConfig(logging_config)
     logger = logging.getLogger(__name__)
@@ -91,6 +79,8 @@ if __name__ == "__main__":
         "PYSPARK_JOB_ARGS": " ".join(args.spark_args) if args.spark_args else ""
     }
 
+    run_date = date.today().strftime("%Y-%m-%d")
+
     conf = SparkConf()
     if args.spark_args:
         spark_args_tuples = [arg_str.split("=") for arg_str in args.spark_args]
@@ -105,7 +95,14 @@ if __name__ == "__main__":
     sc = SparkSession.builder.appName(args.job_name).config(conf=conf).getOrCreate()
 
     start = time.time()
-    jc = JobContext(sc, args.job_name, args.class_name, args.file_loc, args.sink_loc)
+    jc = JobContext(
+        sc=sc,
+        job_name=args.job_name,
+        class_name=args.class_name,
+        file_loc=args.file_loc,
+        sink_loc=args.sink_loc,
+        run_date=run_date,
+    )
     jc.run_job()
     end = time.time()
 

@@ -8,6 +8,7 @@ setup(
     version="0.0.1",
     packages=find_packages(where="src"),
     package_dir={'':'src'},
+    data_files=[('configs',['src/configs/logging.json'])],
     install_requires=["requests", "json", "pyspark==3.2.0", "delta-spark",],
     tests_requires=["mock"]
 )

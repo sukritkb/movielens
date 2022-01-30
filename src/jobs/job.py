@@ -2,7 +2,7 @@ from abc import ABC,abstractmethod
 
 from jobs.context import JobContext
 
-class Jobs:
+class Job:
     def __init__(self,jc: JobContext) -> None:
         self.jc = jc
 
