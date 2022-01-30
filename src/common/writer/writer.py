@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 import logging
 
 
@@ -26,6 +26,7 @@ class Writer:
         df: DataFrame,
         format: DataFormats,
         path: str,
+        partition_columns: List[str] = None,
         mode: str = None,
         options: Dict[str, str] = None,
     ):
@@ -44,6 +45,8 @@ class Writer:
             The file format for the dataframe to be written 
         path: str,
             Path of the dataframe to be written
+        partition_columns: List[str], optional
+            List of partition columns
         mode: str, optional
             Save mode to be used
         options: Dict[str,str], optional
@@ -65,8 +68,12 @@ class Writer:
             options = [options, DEFAULT_WRITE_OPTIONS][options is None]
             mode = [mode, "overwrite"][mode is None]
 
-            df.write.format(format.value).mode(mode).options(**options).save(path)
-
+            if not partition_columns:
+                df.write.format(format.value).mode(mode).options(**options).save(path)
+            else:
+                df.write.format(format.value).mode(mode).options(**options).partitionBy(
+                    **partition_columns
+                ).save(path)
             logger.info(f"Successfully saved dataframe to {path}")
 
         except IOError:

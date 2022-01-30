@@ -6,8 +6,9 @@ setup(
     author="Sukrit Bahadur",
     author_email="sukrit.bahadur@gmail.com",
     version="0.0.1",
-    packages=find_packages(include=["src","src.*"]),
-    package_dir={'': 'src'},
+    packages=find_packages(where="src"),
+    package_dir={'':'src'},
+    data_files=[('configs',['src/configs/logging.json'])],
     install_requires=["requests", "json", "pyspark==3.2.0", "delta-spark",],
     tests_requires=["mock"]
 )
