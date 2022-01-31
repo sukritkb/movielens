@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 class TransformTopTen(Job):
     def compute(self):
-        ratings_path = Utils.remove_trailing_slash(self.jc.file_loc) + "/ratings.csv"
+        ratings_path = Utils.remove_trailing_slash(
+            self.jc.file_loc) + "/ratings.csv"
         sink_path = Utils.remove_trailing_slash(self.jc.sink) + "/top_ten"
         ratings_df = (
             CSVReader(self.jc.spark)
@@ -35,7 +36,5 @@ class TransformTopTen(Job):
             .coalesce(1)
             .limit(10)
         )
-
-        result_df.show(10)
 
         CSVWriter(self.jc.spark).write(result_df, sink_path)
