@@ -2,13 +2,13 @@ help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
-	@echo "lint - check style"
 	@echo "test - run tests quickly with the default Python"
 	@echo "build - package"
+	@echo "run - activates the created virtualenv"
 
 all: default
 
-default: clean deps test lint build
+default: clean deps test build run
 
 .venv:
 	if [ ! -e ".venv/bin/activate_this.py" ] ; then virtualenv --clear .venv ; fi
@@ -34,11 +34,11 @@ deps: .venv
 	. .venv/bin/activate && pip install -U -r requirements.txt -t ./src/libs
 	. .venv/bin/activate && pip install -U -r requirements.txt 
 
-lint:
-	. .venv/bin/activate && pylint -r n src/main.py src/common src/jobs tests
-
 test:
 	. .venv/bin/activate && pytest ./tests/* 
 
 build: clean
 	. .venv/bin/activate && python setup.py bdist_egg
+
+run: 
+	. .venv/bin/activate 

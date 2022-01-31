@@ -1,12 +1,9 @@
-from typing import Dict, List
 import logging
+from typing import Dict, List
 
-
-from pyspark.sql import SparkSession, DataFrame
+from common.constants import DEFAULT_WRITE_OPTIONS, DataFormats
 from py4j.protocol import Py4JError
-
-
-from common.constants import DataFormats, DEFAULT_WRITE_OPTIONS
+from pyspark.sql import DataFrame, SparkSession
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +65,8 @@ class Writer:
             mode = [mode, "overwrite"][mode is None]
 
             if not partition_columns:
-                df.write.format(format.value).mode(mode).options(**options).save(path)
+                df.write.format(format.value).mode(
+                    mode).options(**options).save(path)
             else:
                 df.write.format(format.value).mode(mode).options(**options).partitionBy(
                     *partition_columns
