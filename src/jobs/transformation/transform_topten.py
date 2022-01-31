@@ -32,6 +32,7 @@ class TransformTopTen(Job):
             .distinct()
             .orderBy(desc("avg_rating"))
             .select("movieId")
+            .coalesce(1)
         )
 
         CSVWriter(self.jc.spark).write(result_df, sink_path)

@@ -85,25 +85,8 @@ class DeltaWriter(Writer):
         """
         try:
 
-            try:
-                deltaTargetTable = DeltaTable.forPath(
-                    self.sc, target_table_path)
-            except AnalysisException:
-                if db_name and target_table_name:
-                    self.write_to_table(
-                        dfUpdates,
-                        db_name,
-                        target_table_name,
-                        target_table_path,
-                        partition_columns,
-                        mode,
-                        options
-                    )
-                else:
-                    logger.error(
-                        "Target table not found and db name and table name were also not provided"
-                    )
-                    raise
+            deltaTargetTable = DeltaTable.forPath(
+                self.sc, target_table_path)
 
             join_condition = Utils.get_join_conditions(join_columns)
             when_matched_set = Utils.modify_upsert_set(when_matched_set)
@@ -116,5 +99,18 @@ class DeltaWriter(Writer):
             ).execute()
 
         except AnalysisException:
-            logger.error("Error while upserting to delta table.")
-            raise
+            if db_name and target_table_name:
+                self.write_to_table(
+                    dfUpdates,
+                    db_name,
+                    target_table_name,
+                    target_table_path,
+                    partition_columns,
+                    mode,
+                    options
+                )
+            else:
+                logger.error(
+                    "Target table not found and db name and table name were also not provided"
+                )
+                raise
