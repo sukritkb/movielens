@@ -1,4 +1,4 @@
-# asos-movielens
+# movielens
 
 The project consists of 4 jobs: 
 * StageRatings - to upsert ratings into a delta table after partitioning 
