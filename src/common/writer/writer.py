@@ -3,7 +3,6 @@ import logging
 
 
 from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.utils import AnalysisException
 from py4j.protocol import Py4JError
 
 
@@ -32,7 +31,7 @@ class Writer:
     ):
         """
         Method to write dataframes by passing format, path and options
-        
+
         If the argument `options` is not passed default write options are used 
         If the argument `mode` is not passed then default mode overwrite is used
 
@@ -55,16 +54,16 @@ class Writer:
         Returns
         -------
         df: DataFrame, 
-            a spark dataframe object 
-        
+            a spark dataframe object
+
         Raises
         ------
         IOException:
-            if unable to create the directory in the specified path     
+            if unable to create the directory in the specified path
 
         """
         try:
-            logger.info(f"Trying to write {format} dataframe to {path}")
+            logger.info("Trying to write %s dataframe to %s", format, path)
             options = [options, DEFAULT_WRITE_OPTIONS][options is None]
             mode = [mode, "overwrite"][mode is None]
 
@@ -74,10 +73,8 @@ class Writer:
                 df.write.format(format.value).mode(mode).options(**options).partitionBy(
                     *partition_columns
                 ).save(path)
-            logger.info(f"Successfully saved dataframe to {path}")
+            logger.info("Successfully saved dataframe to %s", path)
 
-        except IOError:
-            logger.error(f"Unable to create directory: {path}")
-            raise
-        except Exception:
+        except Py4JError:
+            logger.error("Unable to create directory: %s", path)
             raise

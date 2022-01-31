@@ -11,5 +11,7 @@ class CSVReader(Reader):
         super().__init__(sc)
         self.sc = sc
 
-    def read(self, path: str, options: Dict[str, str] = DEFAULT_CSV_READ_OPTIONS) -> DataFrame:
-        return super().read(DataFormats.CSV, path, options)
+    def read(
+        self, path: str, options: Dict[str, str] = DEFAULT_CSV_READ_OPTIONS
+    ) -> DataFrame:
+        super().read(DataFormats.CSV, path, options)

@@ -20,4 +20,3 @@ class CSVWriter(Writer):
         options: Dict[str, str] = DEFAULT_CSV_WRITE_OPTIONS,
     ):
         super().write(df, DataFormats.CSV, path, partition_columns, mode, options)
-

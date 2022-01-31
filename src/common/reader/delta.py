@@ -12,4 +12,4 @@ class DeltaReader(Reader):
         self.sc = sc
 
     def read(self, path: str, options: Dict[str, str] = None) -> DataFrame:
-        return super().read(DataFormats.DELTA, path, options)
+        super().read(DataFormats.DELTA, path, options)

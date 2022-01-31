@@ -2,7 +2,6 @@ import argparse
 import importlib.resources
 import time
 import os
-import sys
 import logging.config
 import logging
 import json
@@ -12,14 +11,13 @@ from datetime import date
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 
-from common.constants import DEFAULT_SPARK_CONF, DataFormats, JobType
-from common.reader.reader import Reader
+from common.constants import DEFAULT_SPARK_CONF
 from jobs.context import JobContext
 
 
 try:
     import pyspark
-except:
+except BaseException:
     import findspark
 
     findspark.init()
@@ -30,8 +28,6 @@ __author__ = "sukritkb"
 
 if __name__ == "__main__":
 
-    package_directory = os.path.dirname(os.path.abspath(__file__))
-    log_file = os.path.join(package_directory, "logging.json")
     with importlib.resources.open_text("configs", "logging.json") as log_json:
         logging_config = json.load(log_json)
     logging.config.dictConfig(logging_config)
@@ -73,7 +69,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    logger.info(f"Called with arguments: {args}")
+    logger.info("Called with arguments: %s", args)
 
     environment = {
         "PYSPARK_JOB_ARGS": " ".join(args.spark_args) if args.spark_args else ""
@@ -84,12 +80,12 @@ if __name__ == "__main__":
     conf = SparkConf()
     if args.spark_args:
         spark_args_tuples = [arg_str.split("=") for arg_str in args.spark_args]
-        logger.info(f"spark_args_tuples: {spark_args_tuples}")
+        logger.info("spark_args_tuples: %s", spark_args_tuples)
         conf.setAll(spark_args_tuples)
     else:
         conf.setAll(DEFAULT_SPARK_CONF)
 
-    logger.info(f"\nRunning job {args.job_name}...\nenvironment is {environment}\n")
+    logger.info("\nRunning job %s...\nenvironment is %s\n", args.job_name, environment)
 
     os.environ.update(environment)
     sc = SparkSession.builder.appName(args.job_name).config(conf=conf).getOrCreate()
@@ -106,4 +102,4 @@ if __name__ == "__main__":
     jc.run_job()
     end = time.time()
 
-    logger.info(f"\nExecution of job {args.job_name} took {end-start} seconds")
+    logger.info("\nExecution of job %s took %s seconds", args.job_name, end - start)

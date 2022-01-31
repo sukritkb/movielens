@@ -1,11 +1,10 @@
 import logging
 
-from delta.tables import *
+
 from pyspark.sql.utils import AnalysisException
 from pyspark.sql.functions import lit
 
 from jobs.job import Job
-from jobs.context import JobContext
 from common.utils import Utils
 from common.reader.csv import CSVReader
 from common.writer.delta import DeltaWriter
@@ -14,9 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class StageRatings(Job):
-    def __init__(self, jc: JobContext) -> None:
-        super().__init__(jc)
-
     def compute(self):
         try:
             ratings_path = (
@@ -44,5 +40,7 @@ class StageRatings(Job):
             )
 
         except AnalysisException:
+            logger.error(
+                "Encountered an error while running compute for %s", self.jc.job_name
+            )
             raise
-
