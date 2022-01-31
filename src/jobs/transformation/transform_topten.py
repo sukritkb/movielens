@@ -16,7 +16,7 @@ class TransformTopTen(Job):
     def compute(self):
         ratings_path = Utils.remove_trailing_slash(
             self.jc.file_loc) + "/ratings.csv"
-        sink_path = Utils.remove_trailing_slash(self.jc.sink) + "/top_ten"
+        sink_path = Utils.remove_trailing_slash(self.jc.sink) + "/transform_topten"
         ratings_df = (
             CSVReader(self.jc.spark)
             .read(ratings_path)

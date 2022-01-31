@@ -100,6 +100,7 @@ class DeltaWriter(Writer):
 
         except AnalysisException:
             if db_name and target_table_name:
+                logger.info("Creating table")
                 self.write_to_table(
                     dfUpdates,
                     db_name,
@@ -109,6 +110,7 @@ class DeltaWriter(Writer):
                     mode,
                     options
                 )
+                logger.info("Created table")
             else:
                 logger.error(
                     "Target table not found and db name and table name were also not provided"

@@ -19,6 +19,8 @@ class StageRatings(Job):
             ratings_path = (
                 Utils.remove_trailing_slash(self.jc.file_loc) + "/ratings.csv"
             )
+            sink_path = Utils.remove_trailing_slash(
+                self.jc.sink) + "/stage_ratings/"
             ratings_df = (
                 CSVReader(self.jc.spark)
                 .read(ratings_path)
@@ -37,7 +39,7 @@ class StageRatings(Job):
             writer = DeltaWriter(self.jc.spark)
             writer.upsert_to_table(
                 ratings_df,
-                self.jc.sink,
+                sink_path,
                 ["run_date", "movieId", "userId"],
                 column_set,
                 column_set,
