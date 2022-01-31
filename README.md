@@ -10,7 +10,7 @@ The project consists of 4 jobs:
 
 ### Steps to run:
 
-The repo contains a build file which can be leveraged to create a venv and run the code without any hassles:
+The repo contains a Makefile which can be leveraged to create a venv and run the code without any hassles:
 
 * Running `make all` will run all the commands in correct order of requirement.   
 * The make file creates a .venv using the default python and installs all the dependencies inside the same.   
