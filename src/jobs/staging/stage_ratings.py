@@ -8,7 +8,7 @@ from jobs.job import Job
 from common.utils import Utils
 from common.reader.csv import CSVReader
 from common.writer.delta import DeltaWriter
-from src.common.utils import CleanFunctions
+from common.utils import CleanFunctions
 
 logger = logging.getLogger(__name__)
 
