@@ -1,8 +1,9 @@
 # movielens
 
-The project consists of 4 jobs: 
+The project consists of 5 jobs: 
 * StageRatings - to upsert ratings into a delta table after partitioning 
-* StageMoviesTags - loads movies and tags and stores them into delta table after cleaning up the columns and casting 
+* StageMovies - loads movies and stores them into delta table after cleaning up the columns and casting 
+* StageTags - loads tags and stores them into delta table after cleaning up the columns and casting 
 * TransformMovies - exploding the genres column in movies and saving the output as a delta table 
 * TransformTopTen - saving top ten movies with the highest avg rating and no of ratings > 10 into a single csv file 
 
@@ -24,12 +25,14 @@ The repo contains a Makefile which can be leveraged to create a venv and run the
 Arguments: 
 * `--job-name`: name of the module which needs to be run: 
     *  staging.stage_reviews, 
-    *  staging.stage_movies_tags, 
+    *  staging.stage_movies,
+    *  staging.stage_tags 
     *  transformation.transform_movies, 
     *  transformation.transform_topten  
 * `--class-name`: name of the class inside the module which contains the compute function: 
     *  staging.stage_reviews -> StageRatings
-    *  staging.stage_movies_tags -> StageMoviesTags
+    *  staging.stage_movies -> StageMoviesTags
+    *  staging.stage_tags -> StageTags
     *  transformation.transform_movies -> TransformMovies
     *  transformation.transform_topten -> TransformTopTen
 * `--file-loc`: absolute path to the directory of the movie lens csvs

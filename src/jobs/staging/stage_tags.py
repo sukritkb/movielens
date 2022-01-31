@@ -12,35 +12,42 @@ from common.writer.delta import DeltaWriter
 logger = logging.getLogger(__name__)
 
 
-class StageMoviesTags(Job):
+class StageTags(Job):
     def compute(self):
         try:
-            movies_path = Utils.remove_trailing_slash(
-                self.jc.file_loc) + "/movies.csv"
+
+            tags_path = Utils.remove_trailing_slash(
+                self.jc.file_loc) + "/tags.csv"
 
             sink_path = Utils.remove_trailing_slash(
-                self.jc.sink)+"/stage_movies"
+                self.jc.sink) + "/stage_tags"
 
             reader = CSVReader(self.jc.spark)
             writer = DeltaWriter(self.jc.spark)
 
-            movies_df = (
-                reader.read(movies_path)
+            tags_df = (
+                reader.read(tags_path)
                 .withColumn("run_date", lit(self.jc.run_date))
+                .withColumn(
+                    "userId", CleanFunctions.clean_numeric(
+                        col("userId"), "int")
+                )
                 .withColumn(
                     "movieId", CleanFunctions.clean_numeric(
                         col("movieId"), "int")
                 )
-                .withColumn("title", CleanFunctions.clean_string(col("title")))
-                .withColumn("genres", CleanFunctions.clean_string(col("genres")))
+                .withColumn("tag", CleanFunctions.clean_string(col("tag")))
+                .withColumn(
+                    "timestamp", col("timestamp").cast("timestamp")
+                )
             )
 
             writer.write_to_table(
-                movies_df,
+                tags_df,
                 "default",
-                "stage_movies",
+                "stage_tags",
                 sink_path,
-                ["run_date", "movieId"],
+                ["run_date", "movieId", "userId"],
             )
 
         except AnalysisException:
