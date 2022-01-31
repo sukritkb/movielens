@@ -12,4 +12,4 @@ class ParquetReader(Reader):
         self.sc = sc
 
     def read(self, path: str, options: Dict[str, str] = None) -> DataFrame:
-        super().read(DataFormats.PARQUET, path, options)
+        return super().read(DataFormats.PARQUET, path, options)

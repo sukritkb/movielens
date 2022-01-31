@@ -53,7 +53,7 @@ class StageMoviesTags(Job):
                 )
                 .withColumn("tags", CleanFunctions.clean_string(col("tags")))
                 .withColumn(
-                    "timestamp", CleanFunctions.clean_numeric(col("timestamp"), "float")
+                    "timestamp", col("timestamp").cast("timestamp")
                 )
             )
 

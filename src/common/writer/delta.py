@@ -1,13 +1,13 @@
-from typing import Dict, List
 import logging
-
-from pyspark.sql import SparkSession, DataFrame
-from delta.tables import DeltaTable
-from pyspark.sql.utils import AnalysisException
+from typing import Dict, List
 
 from common.constants import DataFormats
 from common.utils import Utils
 from common.writer.writer import Writer
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.utils import AnalysisException
+
+from delta.tables import DeltaTable
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +45,15 @@ class DeltaWriter(Writer):
     def upsert_to_table(
         self,
         dfUpdates: DataFrame,
-        target_table: str,
+        target_table_path: str,
         join_columns: List[str],
         when_matched_set: Dict[str, str],
         when_not_matched_set: Dict[str, str],
+        db_name: str = None,
+        target_table_name: str = None,
+        partition_columns: List[str] = None,
+        mode: str = None,
+        options: Dict[str, str] = None,
     ):
         """
         Delta table function to perform upserts
@@ -59,7 +64,7 @@ class DeltaWriter(Writer):
         sc: SparkSession,
         df: DataFrame,
             Spark dataframe which contains the updates
-        target_table: str,
+        target_table_path: str,
             Path of the target table where upserts are to be done
         join_columns: str,
             Columns used to determine a match
@@ -67,10 +72,39 @@ class DeltaWriter(Writer):
             Dictionary to update columns when a match is found
         when_not_matched_set: Dict[str,str],
             Dictionary to insert columns when a match is not found
+        db_name: str, optional
+            name of the database to be used - used to create the table if it doesnt exist
+        target_table_name: str, optional 
+            name of the table where upsert is required - used to create the table if it doesnt exist
+        partition_columns: List[str], optional
+            List of partition columns
+        mode: str, optional
+            Save mode to be used
+        options: Dict[str,str], optional
+            Write options for the underlying datasource
         """
         try:
 
-            deltaTargetTable = DeltaTable.forPath(self.sc, target_table)
+            try:
+                deltaTargetTable = DeltaTable.forPath(
+                    self.sc, target_table_path)
+            except AnalysisException:
+                if db_name and target_table_name:
+                    self.write_to_table(
+                        dfUpdates,
+                        db_name,
+                        target_table_name,
+                        target_table_path,
+                        partition_columns,
+                        mode,
+                        options
+                    )
+                else:
+                    logger.error(
+                        "Target table not found and db name and table name were also not provided"
+                    )
+                    raise
+
             join_condition = Utils.get_join_conditions(join_columns)
             when_matched_set = Utils.modify_upsert_set(when_matched_set)
             when_not_matched_set = Utils.modify_upsert_set(

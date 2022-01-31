@@ -1,11 +1,9 @@
-from typing import Dict
 import logging
+from typing import Dict
 
-
-from pyspark.sql import SparkSession, DataFrame
+from common.constants import DEFAULT_READ_OPTIONS, DataFormats
+from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.utils import AnalysisException
-
-from common.constants import DataFormats, DEFAULT_READ_OPTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +49,8 @@ class Reader:
         try:
             logger.info("Trying to read %s dataframe from %s", format, path)
             options = [options, DEFAULT_READ_OPTIONS][options is None]
-            df = self.spark.read.format(format.value).options(**options).load(path)
+            df = self.spark.read.format(
+                format.value).options(**options).load(path)
             logger.info("Successfully read dataframe from %s", path)
             return df
         except AnalysisException:
