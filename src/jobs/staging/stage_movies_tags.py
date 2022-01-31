@@ -51,7 +51,7 @@ class StageMoviesTags(Job):
                 .withColumn(
                     "movieId", CleanFunctions.clean_numeric(col("movieId"), "int")
                 )
-                .withColumn("tags", CleanFunctions.clean_string(col("tags")))
+                .withColumn("tag", CleanFunctions.clean_string(col("tag")))
                 .withColumn(
                     "timestamp", col("timestamp").cast("timestamp")
                 )
