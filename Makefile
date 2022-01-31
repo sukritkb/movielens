@@ -39,6 +39,7 @@ test:
 
 build: clean
 	. .venv/bin/activate && python setup.py bdist_egg
+	mv ./dist/*.egg ./dist/asos-movielens.egg
 
 run: 
 	. .venv/bin/activate 

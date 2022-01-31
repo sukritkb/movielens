@@ -19,7 +19,7 @@ The repo contains a build file which can be leveraged to create a venv and run t
 
 ***Run Command***  
  
-```spark-submit --packages io.delta:delta-core_2.12:1.1.0 --py-files asos-movielens/dist/asos_movielens-0.0.1-py3.10.egg main.py --job-name transformation.transform_topten --class-name TransformTopTen  --file-loc ~/ml-latest-small/ --sink-loc ~/ml-latest-small```
+```spark-submit --packages io.delta:delta-core_2.12:1.1.0 --py-files asos-movielens/dist/asos-movielens.egg main.py --job-name transformation.transform_topten --class-name TransformTopTen  --file-loc ~/ml-latest-small/ --sink-loc ~/ml-latest-small```
 
 Arguments: 
 * `--job-name`: name of the module which needs to be run: 
