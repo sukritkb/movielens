@@ -1,8 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 import logging
 
 from pyspark.sql import SparkSession, DataFrame
-from delta.tables import *
+from delta.tables import DeltaTable
 from pyspark.sql.utils import AnalysisException
 
 from common.constants import DataFormats
@@ -10,9 +10,6 @@ from common.utils import Utils
 from common.writer.writer import Writer
 
 logger = logging.getLogger(__name__)
-
-# TODO clear out analysis exceptions
-# TODO pass spark session
 
 
 class DeltaWriter(Writer):
@@ -55,27 +52,29 @@ class DeltaWriter(Writer):
     ):
         """
         Delta table function to perform upserts
+        In case the target table is not present a new table is created. 
 
         Parameters
         ----------
         sc: SparkSession,
-        df: DataFrame, 
-            Spark dataframe which contains the updates 
+        df: DataFrame,
+            Spark dataframe which contains the updates
         target_table: str,
-            Path of the target table where upserts are to be done 
-        join_columns: str, 
-            Columns used to determine a match 
+            Path of the target table where upserts are to be done
+        join_columns: str,
+            Columns used to determine a match
         when_matched_set: Dict[str,str],
-            Dictionary to update columns when a match is found 
+            Dictionary to update columns when a match is found
         when_not_matched_set: Dict[str,str],
-            Dictionary to insert columns when a match is not found 
-
+            Dictionary to insert columns when a match is not found
         """
         try:
+
             deltaTargetTable = DeltaTable.forPath(self.sc, target_table)
             join_condition = Utils.get_join_conditions(join_columns)
             when_matched_set = Utils.modify_upsert_set(when_matched_set)
-            when_not_matched_set = Utils.modify_upsert_set(when_not_matched_set)
+            when_not_matched_set = Utils.modify_upsert_set(
+                when_not_matched_set)
             deltaTargetTable.alias("target").merge(
                 dfUpdates.alias("updates"), join_condition
             ).whenMatchedUpdate(set=when_matched_set).whenNotMatchedInsert(
@@ -83,5 +82,5 @@ class DeltaWriter(Writer):
             ).execute()
 
         except AnalysisException:
+            logger.error("Error while upserting to delta table.")
             raise
-

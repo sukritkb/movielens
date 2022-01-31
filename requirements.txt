@@ -1,0 +1,7 @@
+requests
+pyspark==3.2.0
+delta-spark
+pytest
+pytest-mock
+pylint
+chispa

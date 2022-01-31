@@ -1,4 +1,3 @@
-import os
 import importlib
 import logging
 
@@ -31,15 +30,12 @@ class JobContext:
 
     def run_job(self):
         try:
-            logger.info(f"Trying to import {self.job_name} module")
+            logger.info("Trying to import %s module", self.job_name)
             job_module = importlib.import_module(f"jobs.{self.job_name}")
             getattr(job_module, self.class_name)(self).compute()
         except ModuleNotFoundError:
-            logger.error(f"No module named {self.job_name} was found")
+            logger.error("No module named %s was found", self.job_name)
             raise
         except AttributeError:
-            logger.error(f"Class name: {self.class_name} not found.")
+            logger.error("Class name: %s not found.", self.class_name)
             raise
-        except Exception:
-            raise
-

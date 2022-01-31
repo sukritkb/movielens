@@ -2,7 +2,7 @@ from typing import List, Dict
 import logging
 
 from pyspark.sql import Column
-from pyspark.sql.functions import *
+from pyspark.sql.functions import when, lit
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +37,12 @@ class CleanFunctions:
     def clean_string(
         column: Column, invalid_values: List[str] = ["", "null", " "]
     ) -> Column:
-        return when(~column.isin(invalid_values), column).otherwise(
+        return when(~column.isin(invalid_values), column.cast("string")).otherwise(
             lit(None).cast("string")
         )
 
     @staticmethod
     def clean_numeric(column: Column, data_type: str) -> Column:
-        return when(column.cast(data_type).isNotNull(), column).otherwise(
-            lit(None).cast(data_type)
-        )
-
+        return when(
+            column.cast(data_type).isNotNull(), column.cast(data_type)
+        ).otherwise(lit(None).cast(data_type))

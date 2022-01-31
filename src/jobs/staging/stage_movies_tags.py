@@ -1,11 +1,10 @@
 import logging
 
-from delta.tables import *
+
 from pyspark.sql.utils import AnalysisException
 from pyspark.sql.functions import lit, col
 
 from jobs.job import Job
-from jobs.context import JobContext
 from common.utils import CleanFunctions, Utils
 from common.reader.csv import CSVReader
 from common.writer.delta import DeltaWriter
@@ -14,9 +13,6 @@ logger = logging.getLogger(__name__)
 
 
 class StageMoviesTags(Job):
-    def __init__(self, jc: JobContext) -> None:
-        super().__init__(jc)
-
     def compute(self):
         try:
             movies_path = Utils.remove_trailing_slash(self.jc.file_loc) + "/movies.csv"
@@ -29,9 +25,7 @@ class StageMoviesTags(Job):
             writer = DeltaWriter(self.jc.spark)
 
             movies_df = (
-                reader.read(
-                    movies_path
-                )
+                reader.read(movies_path)
                 .withColumn("run_date", lit(self.jc.run_date))
                 .withColumn(
                     "movieId", CleanFunctions.clean_numeric(col("movieId"), "int")
@@ -49,9 +43,7 @@ class StageMoviesTags(Job):
             )
 
             tags_df = (
-                reader.read(
-                    tags_path
-                )
+                reader.read(tags_path)
                 .withColumn("run_date", lit(self.jc.run_date))
                 .withColumn(
                     "userId", CleanFunctions.clean_numeric(col("userId"), "int")
@@ -74,4 +66,7 @@ class StageMoviesTags(Job):
             )
 
         except AnalysisException:
+            logger.error(
+                "Encountered error while running compute for %s", self.jc.job_name
+            )
             raise
