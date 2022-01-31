@@ -12,7 +12,7 @@ from common.writer.delta import DeltaWriter
 logger = logging.getLogger(__name__)
 
 
-class StageMoviesTags(Job):
+class StageMovies(Job):
     def compute(self):
         try:
             movies_path = Utils.remove_trailing_slash(
