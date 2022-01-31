@@ -17,7 +17,8 @@ The repo contains a build file which can be leveraged to create a venv and run t
 * It runs a few test cases and then creates an egg file with the code packaged inside it.   
 * Finally, it activates the .venv that was created so that the spark application can run in it.   
 
-***Run Command*** 
+***Run Command***  
+ 
 ```spark-submit --packages io.delta:delta-core_2.12:1.1.0 --py-files asos-movielens/dist/asos_movielens-0.0.1-py3.10.egg main.py --job-name transformation.transform_topten --class-name TransformTopTen  --file-loc ~/ml-latest-small/ --sink-loc ~/ml-latest-small```
 
 Arguments: 
