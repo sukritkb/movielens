@@ -10,7 +10,7 @@ def test_clean_numeric(spark_session):
     df = spark_session.createDataFrame(data, ["value", "expected_value"]).withColumn(
         "clean_value", CleanFunctions.clean_numeric(col("value"), "int")
     )
-
+    print("helloworld")
     assert_column_equality(df, "clean_value", "expected_value")
 
 
